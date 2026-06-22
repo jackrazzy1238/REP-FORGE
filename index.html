@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REP-FORGE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero" aria-label="REP-FORGE">
+      <div class="hero-content">
+        <p class="eyebrow">Train. Track. Repeat.</p>
+        <h1>REP-FORGE</h1>
+        <p class="hero-copy">Build lifting days, rename workouts, update sets and reps, and keep every lift organized in one sharp training board.</p>
+      </div>
+    </section>
+
+    <section class="tracker" aria-label="Workout tracker">
+      <div class="day-rail">
+        <div class="rail-header">
+          <span>Calendar</span>
+          <button class="icon-button" id="resetWeekBtn" type="button" aria-label="Reset week" title="Reset week">↺</button>
+        </div>
+        <div class="calendar-tools">
+          <button class="icon-button" id="prevMonthBtn" type="button" aria-label="Previous month" title="Previous month">‹</button>
+          <strong id="calendarTitle"></strong>
+          <button class="icon-button" id="nextMonthBtn" type="button" aria-label="Next month" title="Next month">›</button>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+          <span>Sun</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid" aria-label="Workout calendar"></div>
+        <div class="rail-header schedule-header">
+          <span>Saved days</span>
+        </div>
+        <div class="day-list" id="dayList" role="tablist" aria-label="Saved workout days"></div>
+      </div>
+
+      <section class="workout-panel">
+        <header class="workout-top">
+          <div class="date-block">
+            <label for="dayDate">Date</label>
+            <input id="dayDate" type="date">
+          </div>
+          <div class="streak">12 day streak</div>
+        </header>
+
+        <div class="title-grid">
+          <label>
+            Day name
+            <select id="dayName">
+              <option value="Push Day">Push Day</option>
+              <option value="Pull Day">Pull Day</option>
+              <option value="Leg Day">Leg Day</option>
+              <option value="Rest Day">Rest Day</option>
+            </select>
+          </label>
+          <label>
+            Workout focus
+            <input id="workoutName" type="text" placeholder="Heavy Bench">
+          </label>
+          <label>
+            Est. time
+            <input id="estimatedTime" type="number" min="0" step="5" placeholder="65">
+          </label>
+        </div>
+
+        <section class="generator-panel" aria-label="Workout generator">
+          <div>
+            <h3 class="generator-title">Workout Generator</h3>
+            <strong>Choose a training style</strong>
+          </div>
+          <div class="generator-actions">
+            <select id="workoutStyle" class="workout-style" aria-label="Workout generation style" title="Workout generation style">
+              <option value="standard">Standard</option>
+              <option value="explosive">Explosive / Power</option>
+              <option value="strength">Strength</option>
+              <option value="hypertrophy">Muscle Growth</option>
+              <option value="conditioning">Conditioning</option>
+            </select>
+            <button id="generateWorkoutBtn" type="button" class="primary-button">Generate workout</button>
+          </div>
+        </section>
+
+        <div class="section-title">
+          <div class="workout-heading-block">
+            <h2 id="workoutHeading">Push Day</h2>
+            <p id="workoutSubheading">Chest / Shoulders / Triceps</p>
+          </div>
+          <div class="title-actions">
+            <button id="addSectionBtn" type="button" class="primary-button">Add section</button>
+            <button id="addRecoveryBtn" type="button" class="primary-button">Add recovery</button>
+          </div>
+        </div>
+
+        <div class="lift-list" id="liftList" aria-live="polite"></div>
+        <div class="recovery-list" id="recoveryList" aria-live="polite"></div>
+
+      </section>
+    </section>
+  </main>
+
+  <template id="liftTemplate">
+    <article class="lift-row">
+      <div class="lift-number"></div>
+      <div class="lift-fields">
+        <label>
+          Lift
+          <input class="lift-name" type="text" placeholder="Bench Press">
+        </label>
+        <div class="mini-grid">
+          <label>
+            Sets
+            <input class="lift-sets" type="number" min="1" step="1">
+          </label>
+          <label>
+            Reps
+            <input class="lift-reps" type="text" placeholder="8-10">
+          </label>
+          <label>
+            Weight
+            <input class="lift-weight" type="number" min="0" step="5">
+          </label>
+        </div>
+      </div>
+      <button class="remove-button" type="button" aria-label="Remove lift" title="Remove lift">×</button>
+    </article>
+  </template>
+
+  <template id="sectionTemplate">
+    <section class="workout-section">
+      <div class="workout-section-top">
+        <label>
+          Section
+          <select class="section-name">
+            <option value="Main Lifts">Main Lifts</option>
+            <option value="Abs/Core">Abs/Core</option>
+            <option value="Cardio">Cardio</option>
+            <option value="Mobility">Mobility</option>
+          </select>
+        </label>
+        <div class="section-actions">
+          <button class="secondary-button add-section-lift" type="button">Add exercise</button>
+          <button class="remove-button remove-section" type="button" aria-label="Remove section" title="Remove section">×</button>
+        </div>
+      </div>
+      <div class="section-lifts"></div>
+    </section>
+  </template>
+
+  <template id="recoveryTemplate">
+    <article class="recovery-row">
+      <div class="lift-number"></div>
+      <div class="lift-fields">
+        <label>
+          Recovery
+          <input class="recovery-name" type="text" placeholder="Stretching">
+        </label>
+        <div class="mini-grid recovery-grid">
+          <label>
+            Time
+            <input class="recovery-time" type="text" placeholder="20 min">
+          </label>
+          <label>
+            Notes
+            <input class="recovery-notes" type="text" placeholder="Easy pace, light work">
+          </label>
+        </div>
+      </div>
+      <button class="remove-button" type="button" aria-label="Remove recovery" title="Remove recovery">×</button>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
